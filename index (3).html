@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Happy Birthday Lily</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-family: Georgia, serif;
+    background: linear-gradient(135deg, #fff0f5, #fce4ec, #fff8fa);
+    color: #76515e;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+}
+
+/* CONFETTI CANVAS */
+
+#confettiCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* INTRO */
+
+#intro {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    background: linear-gradient(135deg, #fff0f5, #fce4ec, #fff8fa);
+    transition: opacity 1s;
+}
+
+.intro-card {
+    width: 100%;
+    max-width: 430px;
+    padding: 40px 25px;
+    text-align: center;
+    background: rgba(255,255,255,0.9);
+    border-radius: 25px;
+    box-shadow: 0 15px 45px rgba(150,70,100,0.15);
+    animation: appear 1.2s ease;
+}
+
+.intro-card h1 {
+    color: #c6537b;
+    font-size: 27px;
+    margin-bottom: 25px;
+}
+
+#typing {
+    min-height: 125px;
+    font-size: 17px;
+    line-height: 1.9;
+}
+
+.question {
+    color: #c6537b;
+    font-size: 23px;
+    margin: 20px 0;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.ready-btn {
+    padding: 14px 30px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #e879a0, #c94e7a);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.ready-btn:hover {
+    transform: translateY(-3px);
+}
+
+/* BIRTHDAY PAGE */
+
+#birthday {
+    display: none;
+    min-height: 100vh;
+    padding: 45px 18px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+}
+
+#birthday.show {
+    opacity: 1;
+}
+
+.birthday-title {
+    color: #c6537b;
+    font-size: clamp(29px, 7vw, 43px);
+    margin-bottom: 15px;
+    animation: appear 1s ease;
+}
+
+.subtitle {
+    font-size: 16px;
+    line-height: 1.8;
+    margin: 0 auto 30px;
+    max-width: 450px;
+}
+
+/* PHOTO FRAME */
+
+.paper {
+    width: min(85%, 310px);
+    margin: 0 auto 28px;
+    padding: 12px 12px 18px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 12px 35px rgba(100,50,70,0.2);
+    transform: rotate(-2deg);
+    animation: photoAppear 1.3s ease;
+}
+
+.paper img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
+.photo-caption {
+    padding-top: 13px;
+    color: #bd547a;
+    font-size: 27px;
+    font-weight: bold;
+}
+
+.photo-caption small {
+    display: block;
+    font-size: 12px;
+    color: #a77b89;
+    font-weight: normal;
+    margin-top: 5px;
+}
+
+/* AGE COUNTER */
+
+.age-box {
+    max-width: 430px;
+    margin: 25px auto;
+    padding: 22px 15px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 8px 25px rgba(150,70,100,0.1);
+}
+
+.age-box h2 {
+    color: #c6537b;
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.age-number {
+    color: #bd547a;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.age-label {
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.age-details {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 17px;
+    margin-top: 17px;
+}
+
+.age-details div {
+    min-width: 55px;
+}
+
+.age-details strong {
+    display: block;
+    color: #c6537b;
+    font-size: 22px;
+}
+
+.age-details span {
+    font-size: 11px;
+}
+
+/* BIRTHDAY MESSAGE */
+
+.message {
+    max-width: 450px;
+    margin: 25px auto;
+    padding: 25px 20px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 20px;
+    line-height: 1.9;
+    font-size: 16px;
+    box-shadow: 0 8px 25px rgba(150,70,100,0.08);
+}
+
+.message h2 {
+    color: #c6537b;
+    margin-bottom: 12px;
+}
+
+/* SURPRISE */
+
+.surprise-btn {
+    padding: 14px 28px;
+    border-radius: 30px;
+    color: white;
+    background: linear-gradient(135deg, #e879a0, #c94e7a);
+    font-size: 16px;
+    margin: 15px 0;
+    box-shadow: 0 6px 18px rgba(201,78,122,0.25);
+    transition: 0.3s;
+}
+
+.surprise-btn:hover {
+    transform: translateY(-3px);
+}
+
+.surprise-message {
+    display: none;
+    max-width: 420px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 18px;
+    background: white;
+    color: #bd547a;
+    line-height: 1.8;
+    animation: appear 1s ease;
+}
+
+.surprise-message h2 {
+    margin-bottom: 12px;
+}
+
+/* MUSIC */
+
+.music-btn {
+    display: block;
+    margin: 15px auto;
+    padding: 10px 20px;
+    background: white;
+    color: #bd547a;
+    border: 1px solid #e8a6bd;
+    border-radius: 25px;
+}
+
+/* FLOATING DECORATIONS */
+
+.floating {
+    position: fixed;
+    bottom: -30px;
+    z-index: 1;
+    pointer-events: none;
+    color: #e88ba9;
+    opacity: 0.6;
+    animation: floatUp linear forwards;
+}
+
+@keyframes floatUp {
+    from {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 0.6;
+    }
+
+    to {
+        transform: translateY(-110vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* ANIMATIONS */
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes photoAppear {
+    from {
+        opacity: 0;
+        transform: translateY(30px) rotate(5deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) rotate(-2deg);
+    }
+}
+
+footer {
+    padding: 25px 10px;
+    color: #a77b89;
+    font-size: 13px;
+}
+
+@media(max-width: 480px) {
+    #birthday {
+        padding-top: 35px;
+    }
+
+    .intro-card {
+        padding: 32px 20px;
+    }
+}
+
+@media(prefers-reduced-motion: reduce) {
+    .floating {
+        animation-duration: 0.01ms !important;
+    }
+
+    *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="confettiCanvas"></canvas>
+
+<!-- INTRODUCTION -->
+
+<section id="intro">
+
+    <div class="intro-card">
+
+        <h1>Lily</h1>
+
+        <p id="typing"></p>
+
+        <div class="question" id="question">
+            Yengningbro?
+        </div>
+
+        <button
+            class="ready-btn"
+            id="readyBtn"
+            onclick="startBirthday()">
+            Hoi
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- BIRTHDAY PAGE -->
+
+<main id="birthday">
+
+    <h1 class="birthday-title">
+        Happy Birthday!
+    </h1>
+
+    <p class="subtitle">
+        Today is your special day. Let's make it a little more memorable!
+    </p>
+
+
+    <!-- PHOTO FRAME -->
+
+    <div class="paper">
+
+        <img src="lily.jpg" alt="Lily's Birthday Photo">
+
+        <div class="photo-caption">
+          
+
+            <small>
+                Happy Birthday 🎂 
+            </small>
+        </div>
+
+    </div>
+
+
+    <!-- AGE COUNTER -->
+
+    <div class="age-box">
+
+        <h2>Age :</h2>
+
+        <div class="age-number" id="age">18</div>
+
+        <div class="age-label">
+            Years
+        </div>
+
+        <div class="age-details">
+
+            <div>
+                <strong id="months">0</strong>
+                <span>Months</span>
+            </div>
+
+            <div>
+                <strong id="days">0</strong>
+                <span>Days</span>
+            </div>
+
+            <div>
+                <strong id="hours">0</strong>
+                <span>Hours</span>
+            </div>
+
+            <div>
+                <strong id="minutes">0</strong>
+                <span>Minutes</span>
+            </div>
+
+            <div>
+                <strong id="seconds">0</strong>
+                <span>Seconds</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BIRTHDAY MESSAGE -->
+
+    <div class="message">
+
+        <h2>Happy Birthday, Lily!</h2>
+
+        <p>
+            I know this wish is a little late, but I hope it makes you smile.
+
+            May this new chapter bring you confidence, success and exciting
+            opportunities.
+
+            Keep learning, follow your dreams and make the most of every moment.
+
+            Wishing you a bright future!
+        </p>
+
+    </div>
+
+
+    <!-- SURPRISE -->
+
+    <button class="surprise-btn" onclick="showSurprise()">
+        A Little Surprise
+    </button>
+
+    <div class="surprise-message" id="surpriseMessage">
+
+        <h2>Little Lily...</h2>
+      I hope you like it!😊
+
+    </div>
+
+
+    <!-- MUSIC CONTROL -->
+
+    <button class="music-btn" id="musicBtn" onclick="toggleMusic()">
+        Play Music
+    </button>
+
+    <footer>
+        A small birthday creation, made just for you.
+    </footer>
+
+</main>
+
+
+<!-- MUSIC -->
+
+<audio id="birthdayMusic" src="audio.mp3" loop preload="auto"></audio>
+
+
+<script>
+
+/* INTRO TYPING */
+
+const message =
+"Ngashi Nggi oina eina keinom sum sembane...";
+
+const typingElement = document.getElementById("typing");
+const question = document.getElementById("question");
+const readyBtn = document.getElementById("readyBtn");
+
+let typingIndex = 0;
+
+function typeMessage() {
+
+    if (typingIndex < message.length) {
+
+        typingElement.textContent += message.charAt(typingIndex);
+
+        typingIndex++;
+
+        setTimeout(typeMessage, 48);
+
+    } else {
+
+        setTimeout(() => {
+
+            question.style.opacity = "1";
+
+            setTimeout(() => {
+                readyBtn.style.opacity = "1";
+            }, 700);
+
+        }, 600);
+    }
+}
+
+window.addEventListener("load", () => {
+    setTimeout(typeMessage, 800);
+});
+
+
+/* START BIRTHDAY */
+
+const music = document.getElementById("birthdayMusic");
+
+function startBirthday() {
+
+    music.play().then(() => {
+        document.getElementById("musicBtn").textContent = "Pause Music";
+    }).catch(() => {
+        document.getElementById("musicBtn").textContent = "Play Music";
+    });
+
+    const intro = document.getElementById("intro");
+    const birthday = document.getElementById("birthday");
+
+    intro.style.opacity = "0";
+
+    setTimeout(() => {
+
+        intro.style.display = "none";
+        birthday.style.display = "block";
+
+        setTimeout(() => {
+            birthday.classList.add("show");
+        }, 50);
+
+        triggerConfettiBlast();
+
+    }, 900);
+}
+
+
+/* MUSIC CONTROL */
+
+function toggleMusic() {
+
+    const musicBtn = document.getElementById("musicBtn");
+
+    if (music.paused) {
+
+        music.play().then(() => {
+            musicBtn.textContent = "Pause Music";
+        }).catch(() => {
+            musicBtn.textContent = "Play Music";
+        });
+
+    } else {
+
+        music.pause();
+        musicBtn.textContent = "Play Music";
+    }
+}
+
+
+/* AGE COUNTER
+   Birthday: 2 November 2008
+*/
+
+function updateAge() {
+
+    const birthDate = new Date(2008, 10, 2);
+    const now = new Date();
+
+    let years = now.getFullYear() - birthDate.getFullYear();
+
+    const birthdayThisYear = new Date(
+        now.getFullYear(),
+        birthDate.getMonth(),
+        birthDate.getDate()
+    );
+
+    if (now < birthdayThisYear) {
+        years--;
+    }
+
+    const lastBirthday = new Date(
+        birthDate.getFullYear() + years,
+        birthDate.getMonth(),
+        birthDate.getDate()
+    );
+
+    let remaining = now - lastBirthday;
+
+    const monthLength = 30.4375 * 24 * 60 * 60 * 1000;
+
+    const months = Math.floor(remaining / monthLength);
+
+    remaining -= months * monthLength;
+
+    const days = Math.floor(
+        remaining / (1000 * 60 * 60 * 24)
+    );
+
+    remaining -= days * 24 * 60 * 60 * 1000;
+
+    const hours = Math.floor(
+        remaining / (1000 * 60 * 60)
+    );
+
+    remaining -= hours * 60 * 60 * 1000;
+
+    const minutes = Math.floor(
+        remaining / (1000 * 60)
+    );
+
+    const seconds = Math.floor(
+        (remaining % (1000 * 60)) / 1000
+    );
+
+    document.getElementById("age").textContent = years;
+    document.getElementById("months").textContent = months;
+    document.getElementById("days").textContent = days;
+    document.getElementById("hours").textContent = hours;
+    document.getElementById("minutes").textContent = minutes;
+    document.getElementById("seconds").textContent = seconds;
+}
+
+updateAge();
+setInterval(updateAge, 1000);
+
+
+/* SURPRISE MESSAGE */
+
+function showSurprise() {
+
+    const surprise = document.getElementById("surpriseMessage");
+
+    if (surprise.style.display === "block") {
+        return;
+    }
+
+    surprise.style.display = "block";
+
+    triggerConfettiBlast();
+
+    surprise.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+
+/* FLOATING DECORATIONS */
+
+function createFlower() {
+
+    const flower = document.createElement("div");
+
+    flower.className = "floating";
+
+    flower.textContent = ["✿", "❀", "✧", "❋"][
+        Math.floor(Math.random() * 4)
+    ];
+
+    flower.style.left = Math.random() * 100 + "vw";
+
+    flower.style.fontSize =
+        (15 + Math.random() * 20) + "px";
+
+    flower.style.animationDuration =
+        (7 + Math.random() * 7) + "s";
+
+    document.body.appendChild(flower);
+
+    setTimeout(() => flower.remove(), 14000);
+}
+
+setInterval(createFlower, 700);
+
+
+/* CONFETTI ENGINE */
+
+const canvas = document.getElementById("confettiCanvas");
+const ctx = canvas.getContext("2d");
+
+let particles = [];
+let animationId = null;
+
+function resizeCanvas() {
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+
+    canvas.style.width = window.innerWidth + "px";
+    canvas.style.height = window.innerHeight + "px";
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+const colors = [
+    "#ff477e",
+    "#ffbe0b",
+    "#8338ec",
+    "#3a86ff",
+    "#06d6a0",
+    "#ff6b35",
+    "#f72585",
+    "#ffffff",
+    "#d4af37"
+];
+
+function triggerConfettiBlast() {
+
+    createCannonStream(
+        0,
+        window.innerHeight + 15,
+        1
+    );
+
+    createCannonStream(
+        window.innerWidth,
+        window.innerHeight + 15,
+        -1
+    );
+}
+
+function createCannonStream(startX, startY, direction) {
+
+    const particleCount = 110;
+
+    for (let i = 0; i < particleCount; i++) {
+
+        const angle =
+            (Math.random() * 55 + 40) * (Math.PI / 180);
+
+        const speed = Math.random() * 18 + 14;
+
+        particles.push({
+
+            x: startX,
+            y: startY,
+
+            vx: Math.cos(angle) * speed * direction *
+                (Math.random() * 0.4 + 0.8),
+
+            vy: -Math.sin(angle) * speed *
+                (Math.random() * 0.5 + 0.9),
+
+            w: Math.random() * 9 + 6,
+            h: Math.random() * 14 + 8,
+
+            color: colors[
+                Math.floor(Math.random() * colors.length)
+            ],
+
+            rotation: Math.random() * 360,
+
+            rotationSpeed: (Math.random() - 0.5) * 14,
+
+            tilt: Math.random() * Math.PI,
+
+            tiltSpeed: Math.random() * 0.1 + 0.05,
+
+            opacity: 1
+
+        });
+    }
+
+    if (!animationId) {
+        animateConfetti();
+    }
+}
+
+function animateConfetti() {
+
+    ctx.clearRect(
+        0,
+        0,
+        window.innerWidth,
+        window.innerHeight
+    );
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+
+        let p = particles[i];
+
+        // Gravity and air resistance
+
+        p.vy += 0.38;
+        p.vx *= 0.98;
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        p.rotation += p.rotationSpeed;
+        p.tilt += p.tiltSpeed;
+
+        if (p.y > window.innerHeight - 80) {
+            p.opacity -= 0.02;
+        }
+
+        if (
+            p.opacity <= 0 ||
+            p.y > window.innerHeight + 30
+        ) {
+            particles.splice(i, 1);
+            continue;
+        }
+
+        // Render paper confetti
+
+        ctx.save();
+
+        ctx.translate(p.x, p.y);
+
+        ctx.rotate(p.rotation * Math.PI / 180);
+
+        const tiltScale = Math.cos(p.tilt);
+
+        ctx.scale(tiltScale, 1);
+
+        ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = p.color;
+
+        ctx.fillRect(
+            -p.w / 2,
+            -p.h / 2,
+            p.w,
+            p.h
+        );
+
+        ctx.restore();
+    }
+
+    if (particles.length > 0) {
+
+        animationId = requestAnimationFrame(animateConfetti);
+
+    } else {
+
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+}
+
+</script>
+
+</body>
+</html>
+
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
